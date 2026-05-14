@@ -21,6 +21,7 @@ This repo showcases my journey and experiments in Machine Learning, Data Science
 | 4  | **Heads or Tails**               | Predict heads or tail from a section of an image | [![HeadsOrTails](https://img.shields.io/badge/-HeadsOrTails-ff7b00?style=for-the-badge&logo=opencv&logoColor=white)](https://www.kaggle.com/code/hemajitpatel/heads-or-tails-hem) |
 | 5  | **Superheros Abilities Dataset** | Sample usage notebook for superheroes dataset    | [![Superheroes](https://img.shields.io/badge/-Superheroes-1abc9c?style=for-the-badge&logo=superuser&logoColor=white)](https://www.kaggle.com/code/hemajitpatel/superheros-abilities) |
 | 6  | **Rock vs Mine**                 | Predicts if an object is a rock or a mine using sonar data. | [![RvsM](https://img.shields.io/badge/-RvsM-ff3b30?style=for-the-badge&logo=googlecolab&logoColor=white)](https://colab.research.google.com/drive/1yoUOlJD6ch8ZlxdqiLbBfI6iT6ozt-Al?usp=sharing) |
+| 7  | **LLM Hallucination Evaluation** | Detect hallucinations in LLM responses with classical ML + leakage audit. | [![LLMHall](https://img.shields.io/badge/-LLMHallucination-6c3483?style=for-the-badge&logo=python&logoColor=white)](https://www.kaggle.com/code/hemajitpatel/llm-hallucination-evaluation) |
 
 ---
 
@@ -178,6 +179,43 @@ X_tr, X_te, y_tr, y_te = train_test_split(
 
 > Notebooks live inside `/notebooks/` and include well-commented, reproducible code.
 
+### 6) 🔗 [LLM Hallucination Evaluation](https://www.kaggle.com/code/hemajitpatel/llm-hallucination-evaluation)
+**File:** `llm-hallucination-evaluation.ipynb`
+
+**What's inside**
+- Dataset: LLM Hallucination Benchmark — 200 annotated LLM responses across multiple domains, languages, and prompt types.
+- EDA: binary label distribution, hallucination type breakdown (7 classes), domain spread, hallucination rate analysis.
+- Leakage audit: systematic column-by-column ablation that identified 5 leaky post-labelling features (`severity`, `annotation_confidence`, `correction_text`, `hallucination_span`, `model_name`) that inflated scores to a perfect 1.00.
+- Feature engineering:
+  - Text: TF-IDF (200 features, unigrams, sublinear TF) on combined `prompt_text + [SEP] + response_text`.
+  - Metadata: one-hot encoded `domain`, `language`, `prompt_type`, `task_type` + 5 length/ratio numeric features.
+  - Combined into a single sparse matrix via `scipy.sparse.hstack`.
+- Models included:
+  - Logistic Regression at three regularisation strengths (C = 1.0, 0.1, 0.01).
+  - XGBoost (shallow: `max_depth=2`, `n_estimators=50`) with class-weight correction.
+- Evaluation: 5-fold stratified CV leaderboard with CV F1 (macro), CV AUC-ROC, Train F1, and overfit gap. Confusion matrix and per-domain F1 breakdown on the test set.
+
+**How models are trained**
+- Algorithms: Logistic Regression (`sklearn`) and XGBoost Classifier (`xgboost`).
+- Class imbalance: handled via `class_weight='balanced'` (LR) and `scale_pos_weight=cw[1]/cw[0]` (XGBoost).
+- Regularisation: C values swept over `{1.0, 0.1, 0.01}` to control overfitting on the small dataset; XGBoost capped at depth 2 and 50 trees.
+- CV strategy: `StratifiedKFold(n_splits=5, shuffle=True, random_state=42)` — stratification preserves the 65/35 class ratio in every fold.
+- Best model (XGBoost shallow): CV F1 = `0.9742 ± 0.052`, CV AUC-ROC = `0.9984`.
+
+**Data split**
+- Stratified 70 / 15 / 15 train / val / test split on `label_binary`.
+- At 200 rows: `train=140`, `val=30`, `test=30`.
+- Example snippet:
+```py
+X_train, X_temp, y_train, y_temp = train_test_split(
+    df, df['label_binary'],
+    test_size=0.30, random_state=42, stratify=df['label_binary']
+)
+X_val, X_test, y_val, y_test = train_test_split(
+    X_temp, y_temp,
+    test_size=0.50, random_state=42, stratify=y_temp
+)
+```
 ---
 
 ## 📁 Datasets
@@ -203,7 +241,7 @@ X_tr, X_te, y_tr, y_te = train_test_split(
 - Predictive tasks: `train_test_split(X, y, test_size=0.20, random_state=42)` → 80/20.  
 - Unsupervised tasks: use full dataset, with holdouts only for downstream validation.  
 
-### 2. 🔗 Code Similarity Dataset — Python Variants  
+### 2. 🔗 [Code Similarity Dataset — Python Variants](https://www.kaggle.com/datasets/hemajitpatel/code-similarity-dataset-python-variants) 
 **File:** `code-variants.ipynb`
 
 **What’s inside**

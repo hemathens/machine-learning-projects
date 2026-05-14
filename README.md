@@ -22,6 +22,7 @@ This repo showcases my journey and experiments in Machine Learning, Data Science
 | 5  | **Superheros Abilities Dataset** | Sample usage notebook for superheroes dataset    | [![Superheroes](https://img.shields.io/badge/-Superheroes-1abc9c?style=for-the-badge&logo=superuser&logoColor=white)](https://www.kaggle.com/code/hemajitpatel/superheros-abilities) |
 | 6  | **Rock vs Mine**                 | Predicts if an object is a rock or a mine using sonar data. | [![RvsM](https://img.shields.io/badge/-RvsM-ff3b30?style=for-the-badge&logo=googlecolab&logoColor=white)](https://colab.research.google.com/drive/1yoUOlJD6ch8ZlxdqiLbBfI6iT6ozt-Al?usp=sharing) |
 | 7  | **LLM Hallucination Evaluation** | Detect hallucinations in LLM responses with classical ML + leakage audit. | [![LLMHall](https://img.shields.io/badge/-LLMHallucination-6c3483?style=for-the-badge&logo=python&logoColor=white)](https://www.kaggle.com/code/hemajitpatel/llm-hallucination-evaluation) |
+| 8  | **Code Similarity Analysis**     | Compare code snippets to predict similarites | [![CodeSim](https://img.shields.io/badge/-CodeSimilarity-34495e?style=for-the-badge&logo=python&logoColor=white)](https://www.kaggle.com/code/hemajitpatel/code-similarities-analysis) |
 
 ---
 
